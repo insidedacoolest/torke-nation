@@ -1,0 +1,961 @@
+<title>Torke Nation</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<style>
+  :root{
+    color-scheme: dark;
+    --black:#050505;
+    --black-2:#0e0e0e;
+    --black-3:#1a1a1a;
+    --ivory:#eeeae1;
+    --ivory-2:#e4dfd2;
+    --text:#f6f4ee;
+    --text-dim:#a9a49a;
+    --text-faint:#716c62;
+    --ink:#161410;
+    --ink-dim:#5c574c;
+    --hairline:rgba(246,244,238,.14);
+    --hairline-strong:rgba(246,244,238,.3);
+    --hairline-ink:rgba(22,20,16,.16);
+    --hairline-ink-strong:rgba(22,20,16,.32);
+    --gold:#c7a35a;
+    --gold-soft:rgba(199,163,90,.14);
+    --gold-ink:#171106;
+    --font-head:'Inter',"Helvetica Neue",Arial,sans-serif;
+    --font-mono:'JetBrains Mono',ui-monospace,'SFMono-Regular',monospace;
+    --container:1240px;
+  }
+  *,*::before,*::after{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{margin:0;background:var(--black);color:var(--text);font-family:var(--font-head);font-weight:400;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;}
+  #root{min-height:100vh;}
+  img,svg{max-width:100%;display:block;}
+  a{color:inherit;text-decoration:none;}
+  button{font-family:inherit;}
+  h1,h2,h3,h4{margin:0;text-wrap:balance;font-weight:800;letter-spacing:-.01em;}
+  p{margin:0;}
+  .accent{color:var(--gold);}
+  .container{max-width:var(--container);margin:0 auto;padding:0 24px;}
+  @media(min-width:860px){.container{padding:0 56px;}}
+
+  .tag{font-family:var(--font-mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;}
+  .kicker{display:flex;align-items:center;gap:12px;font-family:var(--font-mono);font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--gold);}
+  .kicker::before{content:"";width:26px;height:1px;background:var(--gold);}
+  .kicker.on-ink{color:var(--ink);opacity:.72;}
+
+  .btn{appearance:none;cursor:pointer;font-family:var(--font-mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;padding:16px 30px;display:inline-flex;align-items:center;gap:12px;border-radius:0;min-height:46px;transition:background .25s ease,color .25s ease,border-color .25s ease,opacity .25s ease;}
+  .btn-outline{background:transparent;border:1px solid var(--gold);color:var(--gold);}
+  .btn-outline:hover{background:var(--gold);color:var(--gold-ink);}
+  .btn-outline.on-ink{border-color:var(--ink);color:var(--ink);}
+  .btn-outline.on-ink:hover{background:var(--ink);color:var(--ivory);}
+  .btn-ghost{background:transparent;border:1px solid var(--hairline-strong);color:var(--text);}
+  .btn-ghost:hover{border-color:var(--text);}
+  .btn-text{border:none;background:none;color:var(--text);padding:6px 0;position:relative;font-size:11px;}
+  .btn-text::after{content:"";position:absolute;left:0;right:0;bottom:0;height:1px;background:currentColor;transform:scaleX(0);transform-origin:right;transition:transform .3s ease;}
+  .btn-text:hover::after{transform:scaleX(1);transform-origin:left;}
+  .btn-sm{padding:11px 18px;min-height:38px;}
+  .btn[disabled]{opacity:.4;cursor:not-allowed;}
+  .btn:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:1px solid var(--gold);outline-offset:3px;}
+
+  /* ---------- nav ---------- */
+  .nav{position:fixed;top:0;left:0;right:0;z-index:50;padding:26px 0;transition:padding .35s ease,background .35s ease,border-color .35s ease;border-bottom:1px solid transparent;}
+  .nav.solid{padding:16px 0;background:rgba(5,5,5,.86);backdrop-filter:blur(14px);border-bottom-color:var(--hairline);}
+  .nav-row{display:flex;align-items:center;justify-content:space-between;}
+  .brand-mark{display:flex;align-items:center;gap:11px;font-family:var(--font-head);font-weight:800;font-size:15px;letter-spacing:.22em;text-transform:uppercase;}
+  .brand-mark svg{flex:none;}
+  .nav-links{display:none;gap:40px;font-family:var(--font-mono);font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;}
+  .nav-links a{color:var(--text-dim);position:relative;padding:4px 0;}
+  .nav-links a::after{content:"";position:absolute;left:0;right:0;bottom:0;height:1px;background:var(--gold);transform:scaleX(0);transition:transform .3s ease;}
+  .nav-links a:hover{color:var(--text);}
+  .nav-links a:hover::after{transform:scaleX(1);}
+  @media(min-width:920px){.nav-links{display:flex;}}
+  .nav-cta{display:none;}
+  @media(min-width:920px){.nav-cta{display:inline-flex;}}
+  .burger{display:flex;flex-direction:column;gap:6px;background:none;border:none;padding:8px;cursor:pointer;}
+  @media(min-width:920px){.burger{display:none;}}
+  .burger span{display:block;width:22px;height:1px;background:var(--text);transition:transform .25s ease,opacity .25s ease;}
+  .burger.open span:nth-child(1){transform:translateY(7px) rotate(45deg);}
+  .burger.open span:nth-child(2){opacity:0;}
+  .burger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
+  .mobile-menu{position:fixed;inset:0;z-index:45;background:var(--black);display:flex;flex-direction:column;padding:110px 28px 40px;gap:2px;}
+  .mobile-menu a{font-family:var(--font-head);font-weight:800;font-size:38px;letter-spacing:-.02em;text-transform:uppercase;padding:16px 0;border-bottom:1px solid var(--hairline);}
+  .mobile-menu .foot{margin-top:auto;display:flex;flex-direction:column;gap:16px;padding-top:30px;}
+
+  /* ---------- hero ---------- */
+  .hero{position:relative;min-height:92vh;display:flex;align-items:flex-end;overflow:hidden;border-bottom:1px solid var(--hairline);background:#050505;}
+  .hero-bg{position:absolute;inset:0;z-index:0;
+    background:
+      radial-gradient(1100px 780px at 82% -6%, rgba(199,163,90,.16), transparent 58%),
+      radial-gradient(760px 620px at 6% 108%, rgba(199,163,90,.08), transparent 60%),
+      radial-gradient(1600px 900px at 50% 50%, #101010, #050505 72%);
+  }
+  .hero-motion{position:absolute;inset:0;z-index:0;width:100%;height:100%;opacity:.15;}
+  .hero-grain{position:absolute;inset:0;z-index:0;opacity:.5;background-image:radial-gradient(rgba(246,244,238,.05) 1px, transparent 1px);background-size:3px 3px;}
+  .rev-dial{position:absolute;z-index:0;right:-120px;top:-120px;width:520px;height:520px;opacity:.55;}
+  @media(max-width:720px){.rev-dial{width:340px;height:340px;right:-140px;top:-70px;}}
+  .hero-inner{position:relative;z-index:1;padding:150px 0 84px;width:100%;}
+  .hero-title{font-size:clamp(46px,10.5vw,140px);font-weight:900;line-height:.92;letter-spacing:-.03em;text-transform:uppercase;margin:22px 0 26px;}
+  .hero-title div{display:block;}
+  .hero-sub{font-size:clamp(15px,1.7vw,18.5px);color:var(--text-dim);max-width:46ch;line-height:1.7;font-weight:500;}
+  .hero-actions{display:flex;flex-wrap:wrap;align-items:center;gap:28px;margin-top:40px;}
+  .countdown-row{display:flex;gap:0;margin-top:60px;max-width:460px;}
+  .countdown-item{padding-right:26px;margin-right:26px;border-right:1px solid var(--hairline);}
+  .countdown-item:last-child{border-right:none;margin-right:0;padding-right:0;}
+  .countdown-item b{display:block;font-family:var(--font-head);font-weight:800;font-variant-numeric:tabular-nums;font-size:clamp(26px,3.6vw,40px);line-height:1;}
+  .countdown-item span{font-family:var(--font-mono);font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--text-faint);}
+
+  /* ---------- numerals strip ---------- */
+  .numerals{border-bottom:1px solid var(--hairline);padding:54px 0;}
+  .numerals-row{display:grid;grid-template-columns:repeat(2,1fr);gap:36px 24px;}
+  @media(min-width:760px){.numerals-row{grid-template-columns:repeat(4,1fr);gap:24px;}}
+  .numeral{border-left:1px solid var(--hairline);padding-left:20px;}
+  .numeral b{display:block;font-family:var(--font-head);font-weight:800;font-size:clamp(30px,3.6vw,48px);line-height:1;}
+  .numeral span{font-family:var(--font-mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--text-faint);}
+
+  /* ---------- section shell ---------- */
+  .section{padding:120px 0;border-bottom:1px solid var(--hairline);}
+  .section.on-ivory{background:var(--ivory);color:var(--ink);border-bottom-color:var(--hairline-ink);}
+  .section-head{max-width:720px;margin-bottom:64px;}
+  .section-title{font-size:clamp(34px,5vw,64px);font-weight:900;text-transform:uppercase;letter-spacing:-.02em;margin-top:18px;}
+
+  /* ---------- edition ---------- */
+  .ed-grid{display:grid;gap:64px;}
+  @media(min-width:960px){.ed-grid{grid-template-columns:.42fr .58fr;}}
+  .ed-number{font-family:var(--font-head);font-weight:900;letter-spacing:-.03em;font-size:clamp(70px,9.5vw,150px);line-height:.85;color:var(--gold);}
+  .ed-name{font-size:clamp(27px,3.6vw,44px);font-weight:900;letter-spacing:-.02em;text-transform:uppercase;margin:14px 0 22px;}
+  .ed-desc{color:var(--text-dim);line-height:1.85;font-size:15.5px;max-width:44ch;font-weight:500;}
+  .ed-cta{margin-top:36px;}
+  .spec-list{margin-top:0;}
+  .spec-row{display:flex;justify-content:space-between;gap:20px;padding:16px 0;border-bottom:1px solid var(--hairline);}
+  .spec-row .k{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--text-faint);padding-top:2px;}
+  .spec-row .v{font-size:15px;font-weight:600;text-align:right;}
+  .roster-label{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--text-faint);margin:44px 0 4px;}
+  .roster-row{display:flex;justify-content:space-between;align-items:center;padding:15px 0;border-bottom:1px solid var(--hairline);}
+  .roster-row .name{font-size:15.5px;font-weight:700;}
+  .roster-status{font-family:var(--font-mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;}
+  .roster-status.confirmed{color:var(--gold);}
+  .roster-status.pending{color:var(--text-faint);}
+
+  /* ---------- highlights index ---------- */
+  .index-list{border-top:1px solid var(--hairline);}
+  .index-row{display:flex;align-items:baseline;gap:26px;padding:26px 0;border-bottom:1px solid var(--hairline);transition:padding-left .3s ease,border-color .3s ease;}
+  .index-row:hover{padding-left:14px;border-color:var(--hairline-strong);}
+  .index-num{font-family:var(--font-mono);font-size:12px;color:var(--text-faint);flex:none;width:32px;}
+  .index-title{font-family:var(--font-head);font-weight:800;font-size:clamp(20px,2.4vw,28px);text-transform:uppercase;letter-spacing:-.01em;flex:none;width:auto;}
+  @media(min-width:760px){.index-title{width:250px;}}
+  .index-desc{color:var(--text-dim);font-size:14px;line-height:1.6;max-width:46ch;font-weight:500;}
+
+  /* ---------- about (ivory) ---------- */
+  .quote{font-family:var(--font-head);font-weight:800;letter-spacing:-.015em;font-size:clamp(26px,3.6vw,44px);line-height:1.25;color:var(--ink);max-width:18ch;margin:26px 0 46px;}
+  .about-cols{display:grid;gap:36px;}
+  @media(min-width:860px){.about-cols{grid-template-columns:repeat(2,1fr);gap:56px;}}
+  .about-cols p{color:var(--ink-dim);line-height:1.85;font-size:15.5px;font-weight:500;}
+
+  /* ---------- partners ---------- */
+  .partners-row{display:flex;flex-wrap:wrap;}
+  .partner-item{flex:1 1 200px;padding:34px 24px;border-left:1px solid var(--hairline);text-align:center;}
+  .partner-item:first-child{border-left:none;}
+  .partner-item b{display:block;font-family:var(--font-head);font-weight:800;font-size:19px;text-transform:uppercase;letter-spacing:.01em;}
+  .partner-item span{display:block;margin-top:8px;font-family:var(--font-mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint);}
+
+  /* ---------- footer ---------- */
+  .footer{padding:130px 0 46px;text-align:center;}
+  .footer-title{font-size:clamp(36px,6.4vw,80px);font-weight:900;letter-spacing:-.02em;text-transform:uppercase;max-width:16ch;margin:0 auto 40px;}
+  .footer-bottom{margin-top:96px;padding-top:26px;border-top:1px solid var(--hairline);display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;align-items:center;text-align:left;}
+  .footer-links{display:flex;flex-wrap:wrap;gap:26px;font-family:var(--font-mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint);}
+  .footer-links a:hover{color:var(--text);}
+  .admin-entry{opacity:.55;}
+  .admin-entry:hover{opacity:1;}
+
+  /* ================= ADMIN CONSOLE ================= */
+  .console{min-height:100vh;background:var(--black);display:flex;flex-direction:column;}
+  .console-top{display:flex;align-items:center;justify-content:space-between;padding:0 20px;height:64px;border-bottom:1px solid var(--hairline);position:sticky;top:0;background:var(--black);z-index:30;}
+  @media(min-width:720px){.console-top{padding:0 32px;}}
+  .console-back{display:flex;align-items:center;gap:9px;color:var(--text-dim);font-family:var(--font-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;}
+  .console-back:hover{color:var(--text);}
+  .console-title{font-family:var(--font-mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--text-faint);display:flex;align-items:center;gap:9px;}
+  .console-title b{color:var(--text);font-weight:500;}
+  .console-body{flex:1;display:flex;flex-direction:column;}
+  @media(min-width:900px){.console-body{flex-direction:row;}}
+  .console-tabs{display:flex;overflow-x:auto;gap:2px;padding:12px 16px;border-bottom:1px solid var(--hairline);background:var(--black-2);}
+  @media(min-width:900px){.console-tabs{flex-direction:column;width:240px;flex:none;border-bottom:none;border-right:1px solid var(--hairline);padding:26px 16px;overflow-x:visible;position:sticky;top:64px;align-self:flex-start;height:calc(100vh - 64px);}}
+  .tab-btn{appearance:none;border:none;background:none;cursor:pointer;text-align:left;color:var(--text-dim);font-family:var(--font-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;padding:12px 14px;white-space:nowrap;min-height:40px;border-left:1px solid transparent;}
+  @media(min-width:900px){.tab-btn{border-left:2px solid transparent;}}
+  .tab-btn:hover{color:var(--text);}
+  .tab-btn.active{color:var(--gold);border-left-color:var(--gold);}
+  .console-main{flex:1;min-width:0;padding:32px 20px 150px;}
+  @media(min-width:720px){.console-main{padding:44px 36px 160px;}}
+  .console-panel{max-width:720px;}
+  .panel-head{margin-bottom:30px;}
+  .panel-head h2{font-family:var(--font-head);font-weight:800;font-size:clamp(24px,3.6vw,32px);text-transform:uppercase;letter-spacing:-.01em;}
+  .panel-head p{color:var(--text-dim);font-size:13px;margin-top:8px;font-family:var(--font-mono);}
+
+  .field{margin-bottom:22px;}
+  .field label{display:block;font-family:var(--font-mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-faint);margin-bottom:9px;}
+  .field input[type=text],.field input[type=datetime-local],.field textarea,.field select{width:100%;background:var(--black-2);border:1px solid var(--hairline-strong);color:var(--text);padding:13px 14px;font-family:var(--font-head);font-weight:500;font-size:14.5px;border-radius:0;}
+  .field textarea{resize:vertical;min-height:92px;line-height:1.6;}
+  .field-row{display:grid;gap:16px;}
+  @media(min-width:560px){.field-row.cols-2{grid-template-columns:1fr 1fr;}}
+
+  .list-editor{border-top:1px solid var(--hairline);}
+  .list-row{display:flex;gap:12px;align-items:flex-start;padding:14px 0;border-bottom:1px solid var(--hairline);}
+  .list-row .inputs{flex:1;display:grid;gap:9px;}
+  .list-row .inputs.cols-2{grid-template-columns:1fr 1fr;}
+  .icon-btn{appearance:none;border:1px solid var(--hairline-strong);background:var(--black-2);color:var(--text-dim);width:40px;height:40px;flex:none;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+  .icon-btn:hover{color:var(--gold);border-color:var(--gold);}
+  .list-add{padding-top:14px;}
+
+  .save-bar{position:fixed;left:0;right:0;bottom:0;z-index:50;background:rgba(14,14,14,.94);backdrop-filter:blur(14px);border-top:1px solid var(--hairline-strong);padding:16px 20px;display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between;}
+  @media(min-width:900px){.save-bar{left:240px;padding:16px 36px;}}
+  .save-status{font-family:var(--font-mono);font-size:11.5px;color:var(--text-dim);display:flex;align-items:center;gap:9px;}
+  .save-status .dot{width:6px;height:6px;border-radius:50%;background:var(--text-faint);}
+  .save-status.dirty .dot{background:var(--gold);}
+  .save-status.ok .dot{background:var(--gold);}
+  .save-status.err .dot{background:#c05a4a;}
+  .banner{padding:14px 18px;border:1px solid var(--hairline-strong);background:var(--black-2);font-size:13px;color:var(--text-dim);margin-bottom:26px;display:flex;gap:12px;align-items:flex-start;font-family:var(--font-mono);}
+  .banner.warn{border-color:var(--gold);color:var(--gold);}
+
+  .toast{position:fixed;right:20px;bottom:92px;z-index:60;background:var(--black-3);border:1px solid var(--hairline-strong);padding:14px 18px;font-family:var(--font-mono);font-size:12px;max-width:280px;box-shadow:0 12px 30px rgba(0,0,0,.5);}
+
+  .vr{color:var(--text-faint);}
+  @media (prefers-reduced-motion: reduce){*{animation-duration:.01ms !important;transition-duration:.01ms !important;}html{scroll-behavior:auto;}}
+</style>
+
+<div id="root"></div>
+<script id="site-data" type="application/json">{"brand":{"name":"Torke Nation","tagline":"Car Drive Experience","handle":"@torkenation","instagramUrl":"https://www.instagram.com/torkenation"},"hero":{"eyebrow":"Comunidade Automóvel · Portugal","title":"Torke\n*Nation*","subtitle":"Uma comunidade privada de desportivos, exóticos e supercarros. Encontros pensados ao pormenor, para quem vive o motor com discrição e exigência.","ctaLabel":"Pedir convite","ctaNote":"Vagas limitadas por edição","eventDate":"2026-09-12T15:00:00+01:00"},"stats":[{"value":"1000","label":"Membros na comunidade"},{"value":"77","label":"Publicações no Instagram"},{"value":"6","label":"Edições realizadas"},{"value":"30+","label":"Carros por evento"}],"event":{"edition":"N.º 06","name":"Exclusive Edition","partner":"Torke Nation × CMPS Crew","date":"12 de Setembro","time":"15h00","location":"Quinta Privada","description":"A edição mais aguardada do ano. Uma tarde a partilhar quinta privada com mais de 30 carros desportivos, exóticos e superdesportivos, entre gastronomia, vinhos, DJ set e piscina.","features":["+30 carros desportivos, exóticos e superdesportivos","Gastronomia e vinhos selecionados","DJ set ao longo da tarde","Piscina e espaço lounge privado"],"confirmed":[{"name":"McLaren 650S","status":"Confirmado"},{"name":"Porsche 911 GT3","status":"Confirmado"},{"name":"Lamborghini Huracán","status":"Confirmado"},{"name":"Ferrari 488","status":"Por revelar"},{"name":"BMW M4 Competition","status":"Confirmado"},{"name":"Audi RS6 Avant","status":"Por revelar"}]},"highlights":[{"label":"Confirmados","desc":"Os carros e nomes já garantidos para a próxima edição."},{"label":"Sabe +","desc":"Perguntas frequentes sobre inscrições, local e regras."},{"label":"Edições","desc":"O arquivo de cada encontro Torke Nation já realizado."},{"label":"Membros","desc":"Quem faz parte da comunidade e como te podes juntar."},{"label":"Parceiros","desc":"Marcas e clubes que colaboram connosco em cada edição."}],"about":{"quote":"Paixão pelo motor, sem pressas e sem postura.","paragraphs":["A Torke Nation nasceu de um grupo pequeno de amigos apaixonados por carros e cresceu para uma comunidade privada com mais de mil membros em Portugal.","Organizamos encontros, passeios e eventos exclusivos onde desportivos, exóticos e supercarros partilham estrada e boa companhia.","Cada edição é pensada ao pormenor: local, roteiro, gastronomia e o grupo certo de pessoas. O resto fica para quem lá estiver."]},"partners":[{"name":"CMPS Crew","role":"Co-organização de eventos"},{"name":"Notomoto | Autohaus","role":"Stand parceiro"}],"contact":{"instagram":"https://www.instagram.com/torkenation","email":"geral@torkenation.pt","whatsapp":""},"updatedAt":"2026-09-08T00:00:00.000Z"}</script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.24.7/babel.min.js"></script>
+
+<script type="text/babel" data-presets="react">
+const {useState, useEffect, useMemo, useCallback, useRef} = React;
+
+/* ---------------- helpers ---------------- */
+function clone(x){ return JSON.parse(JSON.stringify(x)); }
+function pad(n){ return String(n).padStart(2,"0"); }
+
+function renderRich(text){
+  // splits on *word* for a bold gold accent word, and \n for line breaks
+  const lines = text.split("\n");
+  return lines.map((line,li)=>{
+    const parts = line.split(/\*(.+?)\*/g);
+    return (
+      <div key={li}>
+        {parts.map((part,pi)=> pi % 2 === 1 ? <span className="accent" key={pi}>{part}</span> : part)}
+      </div>
+    );
+  });
+}
+
+function useCountdown(iso){
+  const target = useMemo(()=> new Date(iso).getTime(), [iso]);
+  const [now, setNow] = useState(Date.now());
+  useEffect(()=>{
+    const t = setInterval(()=> setNow(Date.now()), 1000);
+    return ()=> clearInterval(t);
+  },[]);
+  const diff = Math.max(0, target - now);
+  const s = Math.floor(diff/1000);
+  return {
+    days: Math.floor(s/86400),
+    hours: Math.floor((s%86400)/3600),
+    mins: Math.floor((s%3600)/60),
+    secs: s%60,
+    done: diff<=0,
+  };
+}
+
+function useHashRoute(){
+  const [hash, setHash] = useState(()=> window.location.hash || "");
+  useEffect(()=>{
+    const onHash = ()=> setHash(window.location.hash || "");
+    window.addEventListener("hashchange", onHash);
+    return ()=> window.removeEventListener("hashchange", onHash);
+  },[]);
+  return hash;
+}
+
+function useScrolled(threshold=40){
+  const [scrolled, setScrolled] = useState(false);
+  useEffect(()=>{
+    const onScroll = ()=> setScrolled(window.scrollY > threshold);
+    onScroll();
+    window.addEventListener("scroll", onScroll, {passive:true});
+    return ()=> window.removeEventListener("scroll", onScroll);
+  },[threshold]);
+  return scrolled;
+}
+
+function loadSeed(){
+  try{
+    const el = document.getElementById("site-data");
+    return JSON.parse(el.textContent);
+  }catch(e){
+    return null;
+  }
+}
+
+/* ---------------- decorative rev-dial ---------------- */
+function RevDial(){
+  const ticks = [];
+  for(let i=0;i<60;i++){
+    const angle = i*6;
+    const major = i%5===0;
+    ticks.push(
+      <line key={i}
+        x1="100" y1={major?10:16} x2="100" y2={major?22:18}
+        stroke="currentColor" strokeWidth={major?1.4:.7}
+        opacity={major?.55:.25}
+        transform={"rotate("+angle+" 100 100)"}/>
+    );
+  }
+  return (
+    <svg className="rev-dial" viewBox="0 0 200 200" fill="none" stroke="var(--gold)" aria-hidden="true">
+      <circle cx="100" cy="100" r="88" strokeWidth=".6" opacity=".35"/>
+      <circle cx="100" cy="100" r="60" strokeWidth=".6" opacity=".2"/>
+      {ticks}
+      <circle cx="100" cy="100" r="2" fill="var(--gold)" stroke="none" opacity=".6"/>
+    </svg>
+  );
+}
+const IconMenuless = null;
+
+/* ---------------- hero "video" background ----------------
+   The Artifact sandbox cannot load a hosted mp4 (media requests to any
+   host other than the allowed script CDNs are blocked), and there is no
+   licensed footage to embed. This canvas loop stands in for it: long-
+   exposure light-trail motion, drawn at full strength and dimmed to 15%
+   opacity in CSS — visually the same "looping footage behind the hero,
+   almost invisible" effect the real thing would give. */
+function HeroMotion(){
+  const ref = useRef(null);
+  useEffect(()=>{
+    const canvas = ref.current;
+    if(!canvas) return;
+    const ctx = canvas.getContext("2d");
+    const reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    let raf = null;
+    let w = 0, h = 0;
+    const streaks = [];
+    const COUNT = 22;
+
+    function resize(){
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      w = canvas.clientWidth;
+      h = canvas.clientHeight;
+      canvas.width = Math.max(1, Math.round(w*dpr));
+      canvas.height = Math.max(1, Math.round(h*dpr));
+      ctx.setTransform(dpr,0,0,dpr,0,0);
+      ctx.fillStyle = "#000";
+      ctx.fillRect(0,0,w,h);
+    }
+    function makeStreak(fromEdge){
+      return {
+        y: Math.random()*h,
+        x: fromEdge ? -40 - Math.random()*200 : Math.random()*w,
+        len: 140 + Math.random()*300,
+        speed: 2.2 + Math.random()*4,
+        width: 0.6 + Math.random()*1.6,
+        gold: Math.random() > 0.7,
+      };
+    }
+    function drawStreak(s){
+      const c = s.gold ? "199,163,90" : "246,244,238";
+      const grad = ctx.createLinearGradient(s.x-s.len, s.y, s.x, s.y);
+      grad.addColorStop(0, "rgba("+c+",0)");
+      grad.addColorStop(1, "rgba("+c+",1)");
+      ctx.strokeStyle = grad;
+      ctx.lineWidth = s.width;
+      ctx.beginPath();
+      ctx.moveTo(s.x-s.len, s.y);
+      ctx.lineTo(s.x, s.y);
+      ctx.stroke();
+    }
+
+    resize();
+    for(let i=0;i<COUNT;i++) streaks.push(makeStreak(false));
+    window.addEventListener("resize", resize);
+
+    function tick(){
+      ctx.fillStyle = "rgba(0,0,0,.15)";
+      ctx.fillRect(0,0,w,h);
+      for(const s of streaks){
+        s.x += s.speed;
+        if(s.x - s.len > w) Object.assign(s, makeStreak(true));
+        drawStreak(s);
+      }
+      raf = requestAnimationFrame(tick);
+    }
+
+    if(reduceMotion){
+      for(const s of streaks) drawStreak(s);
+    }else{
+      tick();
+    }
+    return ()=>{
+      if(raf) cancelAnimationFrame(raf);
+      window.removeEventListener("resize", resize);
+    };
+  },[]);
+  return <canvas ref={ref} className="hero-motion" aria-hidden="true"/>;
+}
+
+/* ================= PUBLIC SITE ================= */
+
+function Nav({content}){
+  const [open, setOpen] = useState(false);
+  const scrolled = useScrolled(30);
+  useEffect(()=>{
+    document.body.style.overflow = open ? "hidden" : "";
+    return ()=>{ document.body.style.overflow = ""; };
+  },[open]);
+  const links = [
+    ["#edicao","Edição"],
+    ["#destaques","Destaques"],
+    ["#sobre","Sobre"],
+    ["#parceiros","Parceiros"],
+  ];
+  return (
+    <nav className={"nav" + (scrolled || open ? " solid" : "")}>
+      <div className="container nav-row">
+        <a href="#top" className="brand-mark">
+          <svg width="16" height="16" viewBox="0 0 16 16"><rect x="1" y="1" width="14" height="14" fill="none" stroke="var(--gold)" strokeWidth="1" transform="rotate(45 8 8)"/></svg>
+          {content.brand.name}
+        </a>
+        <div className="nav-links">
+          {links.map(([href,label])=> <a key={href} href={href}>{label}</a>)}
+        </div>
+        <a className="btn btn-outline btn-sm nav-cta" href="#edicao">{content.hero.ctaLabel}</a>
+        <button className={"burger" + (open?" open":"")} aria-label={open?"Fechar menu":"Abrir menu"} onClick={()=>setOpen(o=>!o)}>
+          <span/><span/><span/>
+        </button>
+      </div>
+      {open && (
+        <div className="mobile-menu">
+          {links.map(([href,label])=> (
+            <a key={href} href={href} onClick={()=>setOpen(false)}>{label}</a>
+          ))}
+          <div className="foot">
+            <a className="btn btn-outline" href="#edicao" onClick={()=>setOpen(false)}>{content.hero.ctaLabel}</a>
+            <a className="btn-text" href={content.brand.instagramUrl} target="_blank" rel="noopener noreferrer">{content.brand.handle}</a>
+          </div>
+        </div>
+      )}
+    </nav>
+  );
+}
+
+function Hero({content}){
+  const cd = useCountdown(content.hero.eventDate);
+  return (
+    <header id="top" className="hero">
+      <div className="hero-bg" aria-hidden="true"/>
+      <HeroMotion/>
+      <div className="hero-grain" aria-hidden="true"/>
+      <RevDial/>
+      <div className="container hero-inner">
+        <span className="kicker">{content.hero.eyebrow}</span>
+        <h1 className="hero-title">{renderRich(content.hero.title)}</h1>
+        <p className="hero-sub">{content.hero.subtitle}</p>
+        <div className="hero-actions">
+          <a className="btn btn-outline" href="#edicao">{content.hero.ctaLabel}</a>
+          <a className="btn-text" href={content.brand.instagramUrl} target="_blank" rel="noopener noreferrer">{content.brand.handle} ↗</a>
+        </div>
+        {!cd.done ? (
+          <div className="countdown-row" role="timer" aria-live="off">
+            <div className="countdown-item"><b>{cd.days}</b><span>Dias</span></div>
+            <div className="countdown-item"><b>{pad(cd.hours)}</b><span>Horas</span></div>
+            <div className="countdown-item"><b>{pad(cd.mins)}</b><span>Min</span></div>
+            <div className="countdown-item"><b>{pad(cd.secs)}</b><span>Seg</span></div>
+            <div className="countdown-item"><span style={{fontSize:"11px",color:"var(--text-dim)"}}>Até {content.event.edition}<br/>{content.event.date}</span></div>
+          </div>
+        ) : (
+          <p className="tag" style={{color:"var(--gold)",marginTop:"50px"}}>A edição está a decorrer</p>
+        )}
+      </div>
+    </header>
+  );
+}
+
+function Numerals({stats}){
+  return (
+    <section className="numerals">
+      <div className="container">
+        <div className="numerals-row">
+          {stats.map((s,i)=>(
+            <div className="numeral" key={i}>
+              <b>{s.value}</b>
+              <span>{s.label}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function EditionSection({event}){
+  return (
+    <section id="edicao" className="section">
+      <div className="container">
+        <div className="ed-grid">
+          <div>
+            <span className="kicker">Próxima edição</span>
+            <div className="ed-number">{event.edition}</div>
+            <h2 className="ed-name">{event.name}</h2>
+            <p className="ed-desc">{event.description}</p>
+            <div className="ed-cta"><a className="btn btn-outline" href={"https://www.instagram.com/torkenation"} target="_blank" rel="noopener noreferrer">Pedir convite</a></div>
+          </div>
+          <div>
+            <div className="spec-list">
+              <div className="spec-row"><span className="k">Data</span><span className="v">{event.date}</span></div>
+              <div className="spec-row"><span className="k">Hora</span><span className="v">{event.time}</span></div>
+              <div className="spec-row"><span className="k">Local</span><span className="v">{event.location}</span></div>
+              <div className="spec-row"><span className="k">Parceria</span><span className="v">{event.partner}</span></div>
+              {event.features.map((f,i)=>(
+                <div className="spec-row" key={i}><span className="k">{i===0?"Inclui":""}</span><span className="v">{f}</span></div>
+              ))}
+            </div>
+            <div className="roster-label">Roster confirmado</div>
+            <div>
+              {event.confirmed.map((c,i)=>(
+                <div className="roster-row" key={i}>
+                  <span className="name">{c.name}</span>
+                  <span className={"roster-status " + (c.status==="Confirmado" ? "confirmed" : "pending")}>{c.status}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Highlights({highlights}){
+  return (
+    <section id="destaques" className="section">
+      <div className="container">
+        <div className="section-head">
+          <span className="kicker">Índice</span>
+          <h2 className="section-title">Destaques</h2>
+        </div>
+        <div className="index-list">
+          {highlights.map((h,i)=>(
+            <div className="index-row" key={i}>
+              <span className="index-num">{pad(i+1)}</span>
+              <span className="index-title">{h.label}</span>
+              <span className="index-desc">{h.desc}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function About({about, brand}){
+  return (
+    <section id="sobre" className="section on-ivory">
+      <div className="container">
+        <span className="kicker on-ink">Sobre a {brand.name}</span>
+        <p className="quote">"{about.quote}"</p>
+        <div className="about-cols">
+          {about.paragraphs.map((p,i)=> <p key={i}>{p}</p>)}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Partners({partners}){
+  return (
+    <section id="parceiros" className="section">
+      <div className="container">
+        <div className="section-head">
+          <span className="kicker">Colaborações</span>
+          <h2 className="section-title">Parceiros</h2>
+        </div>
+        <div className="partners-row">
+          {partners.map((p,i)=>(
+            <div className="partner-item" key={i}>
+              <b>{p.name}</b>
+              <span>{p.role}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Footer({content}){
+  return (
+    <footer className="footer">
+      <div className="container">
+        <span className="kicker" style={{justifyContent:"center"}}>Junta-te à comunidade</span>
+        <h3 className="footer-title">Queres o teu lugar na <span className="accent">próxima</span> edição?</h3>
+        <a className="btn btn-outline" href={content.brand.instagramUrl} target="_blank" rel="noopener noreferrer">Fala connosco no Instagram</a>
+        <div className="footer-bottom">
+          <span className="tag" style={{color:"var(--text-faint)"}}>© {new Date().getFullYear()} {content.brand.name}. Comunidade privada — Portugal.</span>
+          <div className="footer-links">
+            <a href={content.brand.instagramUrl} target="_blank" rel="noopener noreferrer">{content.brand.handle}</a>
+            {content.contact.email && <a href={"mailto:"+content.contact.email}>{content.contact.email}</a>}
+            <a className="admin-entry" href="#/admin">Admin</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+  );
+}
+
+function PublicSite({content}){
+  return (
+    <div>
+      <Nav content={content}/>
+      <Hero content={content}/>
+      <Numerals stats={content.stats}/>
+      <EditionSection event={content.event}/>
+      <Highlights highlights={content.highlights}/>
+      <About about={content.about} brand={content.brand}/>
+      <Partners partners={content.partners}/>
+      <Footer content={content}/>
+    </div>
+  );
+}
+
+/* ================= ADMIN CONSOLE ================= */
+
+function TextField({label, value, onChange, textarea, type="text", hint}){
+  return (
+    <div className="field">
+      <label>{label}</label>
+      {textarea ? (
+        <textarea value={value} onChange={e=>onChange(e.target.value)} />
+      ) : (
+        <input type={type} value={value} onChange={e=>onChange(e.target.value)} />
+      )}
+      {hint && <div style={{fontFamily:"var(--font-mono)",fontSize:"11px",color:"var(--text-faint)",marginTop:"7px"}}>{hint}</div>}
+    </div>
+  );
+}
+
+function ListEditor({items, onChange, renderRow, empty, addLabel, onAdd}){
+  const update = (i, next) => { const copy = items.slice(); copy[i] = next; onChange(copy); };
+  const remove = (i) => onChange(items.filter((_,idx)=>idx!==i));
+  return (
+    <div className="list-editor">
+      {items.length===0 && (
+        <div className="list-row"><div className="inputs" style={{color:"var(--text-faint)",fontSize:"13px",fontFamily:"var(--font-mono)"}}>{empty || "Sem itens ainda."}</div></div>
+      )}
+      {items.map((item,i)=>(
+        <div className="list-row" key={i}>
+          <div className="inputs">{renderRow(item, (next)=>update(i,next))}</div>
+          <button className="icon-btn" onClick={()=>remove(i)} aria-label="Remover" title="Remover">✕</button>
+        </div>
+      ))}
+      <div className="list-add">
+        <button className="btn btn-ghost btn-sm" onClick={onAdd}>+ {addLabel || "Adicionar"}</button>
+      </div>
+    </div>
+  );
+}
+
+function RowInput({value, onChange, placeholder}){
+  return <input type="text" value={value} onChange={e=>onChange(e.target.value)} placeholder={placeholder}
+    style={{width:"100%",background:"var(--black)",border:"1px solid var(--hairline-strong)",color:"var(--text)",padding:"10px 11px",fontSize:"13.5px",fontFamily:"var(--font-head)",fontWeight:500}}/>;
+}
+
+function HeroPanel({draft, set}){
+  const h = draft.hero, b = draft.brand;
+  const localISO = (iso)=>{
+    const d = new Date(iso);
+    if(isNaN(d)) return "";
+    const off = d.getTimezoneOffset();
+    const local = new Date(d.getTime() - off*60000);
+    return local.toISOString().slice(0,16);
+  };
+  return (
+    <div className="console-panel">
+      <div className="panel-head"><h2>Hero</h2><p>Título, subtítulo e contagem para o evento. Usa *palavra* para destacar uma palavra a dourado.</p></div>
+      <TextField label="Nome da marca" value={b.name} onChange={v=>set(d=>{d.brand.name=v;})}/>
+      <TextField label="Assinatura / tagline" value={b.tagline} onChange={v=>set(d=>{d.brand.tagline=v;})}/>
+      <TextField label="Eyebrow (linha acima do título)" value={h.eyebrow} onChange={v=>set(d=>{d.hero.eyebrow=v;})}/>
+      <TextField label="Título (quebra de linha = nova linha; *palavra* = destaque dourado)" value={h.title} textarea onChange={v=>set(d=>{d.hero.title=v;})}/>
+      <TextField label="Subtítulo" value={h.subtitle} textarea onChange={v=>set(d=>{d.hero.subtitle=v;})}/>
+      <div className="field-row cols-2">
+        <TextField label="Texto do botão principal" value={h.ctaLabel} onChange={v=>set(d=>{d.hero.ctaLabel=v;})}/>
+        <TextField label="Data/hora do evento" type="datetime-local" value={localISO(h.eventDate)} onChange={v=>set(d=>{d.hero.eventDate=new Date(v).toISOString();})} hint="Usada na contagem decrescente."/>
+      </div>
+      <TextField label="Instagram (URL)" value={b.instagramUrl} onChange={v=>set(d=>{d.brand.instagramUrl=v;})}/>
+      <TextField label="Instagram (@handle a mostrar)" value={b.handle} onChange={v=>set(d=>{d.brand.handle=v;})}/>
+    </div>
+  );
+}
+
+function StatsPanel({draft, set}){
+  return (
+    <div className="console-panel">
+      <div className="panel-head"><h2>Números</h2><p>A faixa de estatísticas logo abaixo da hero.</p></div>
+      <ListEditor
+        items={draft.stats}
+        addLabel="Adicionar estatística"
+        onAdd={()=>set(d=>{d.stats.push({value:"0",label:"Nova estatística"});})}
+        onChange={(next)=>set(d=>{d.stats=next;})}
+        renderRow={(item,upd)=>(
+          <div className="inputs cols-2">
+            <RowInput value={item.value} placeholder="Valor (ex: 1000)" onChange={v=>upd({...item,value:v})}/>
+            <RowInput value={item.label} placeholder="Rótulo" onChange={v=>upd({...item,label:v})}/>
+          </div>
+        )}
+      />
+    </div>
+  );
+}
+
+function EventPanel({draft, set}){
+  const ev = draft.event;
+  return (
+    <div className="console-panel">
+      <div className="panel-head"><h2>Edição</h2><p>Detalhes da próxima edição.</p></div>
+      <div className="field-row cols-2">
+        <TextField label="Edição (ex: N.º 06)" value={ev.edition} onChange={v=>set(d=>{d.event.edition=v;})}/>
+        <TextField label="Nome do evento" value={ev.name} onChange={v=>set(d=>{d.event.name=v;})}/>
+      </div>
+      <TextField label="Parceria / organização" value={ev.partner} onChange={v=>set(d=>{d.event.partner=v;})}/>
+      <div className="field-row cols-2">
+        <TextField label="Data (texto)" value={ev.date} onChange={v=>set(d=>{d.event.date=v;})}/>
+        <TextField label="Hora (texto)" value={ev.time} onChange={v=>set(d=>{d.event.time=v;})}/>
+      </div>
+      <TextField label="Local" value={ev.location} onChange={v=>set(d=>{d.event.location=v;})}/>
+      <TextField label="Descrição" value={ev.description} textarea onChange={v=>set(d=>{d.event.description=v;})}/>
+      <div style={{marginTop:"32px"}}>
+        <label style={{display:"block",fontFamily:"var(--font-mono)",fontSize:"10.5px",letterSpacing:".12em",textTransform:"uppercase",color:"var(--text-faint)",marginBottom:"9px"}}>O que inclui</label>
+        <ListEditor items={ev.features} addLabel="Adicionar item"
+          onAdd={()=>set(d=>{d.event.features.push("Novo item");})}
+          onChange={(next)=>set(d=>{d.event.features=next;})}
+          renderRow={(item,upd)=><RowInput value={item} onChange={upd}/>}/>
+      </div>
+      <div style={{marginTop:"32px"}}>
+        <label style={{display:"block",fontFamily:"var(--font-mono)",fontSize:"10.5px",letterSpacing:".12em",textTransform:"uppercase",color:"var(--text-faint)",marginBottom:"9px"}}>Roster confirmado</label>
+        <ListEditor items={ev.confirmed} addLabel="Adicionar carro"
+          onAdd={()=>set(d=>{d.event.confirmed.push({name:"Novo carro",status:"Por revelar"});})}
+          onChange={(next)=>set(d=>{d.event.confirmed=next;})}
+          renderRow={(item,upd)=>(
+            <div className="inputs cols-2">
+              <RowInput value={item.name} placeholder="Modelo" onChange={v=>upd({...item,name:v})}/>
+              <select value={item.status} onChange={e=>upd({...item,status:e.target.value})}
+                style={{width:"100%",background:"var(--black)",border:"1px solid var(--hairline-strong)",color:"var(--text)",padding:"10px 11px",fontSize:"13.5px",fontFamily:"var(--font-head)"}}>
+                <option>Confirmado</option>
+                <option>Por revelar</option>
+              </select>
+            </div>
+          )}/>
+      </div>
+    </div>
+  );
+}
+
+function HighlightsPanel({draft, set}){
+  return (
+    <div className="console-panel">
+      <div className="panel-head"><h2>Destaques</h2><p>O índice que espelha os destaques do Instagram.</p></div>
+      <ListEditor items={draft.highlights} addLabel="Adicionar destaque"
+        onAdd={()=>set(d=>{d.highlights.push({label:"Novo destaque",desc:"Descrição breve."});})}
+        onChange={(next)=>set(d=>{d.highlights=next;})}
+        renderRow={(item,upd)=>(
+          <React.Fragment>
+            <RowInput value={item.label} placeholder="Título" onChange={v=>upd({...item,label:v})}/>
+            <RowInput value={item.desc} placeholder="Descrição" onChange={v=>upd({...item,desc:v})}/>
+          </React.Fragment>
+        )}/>
+    </div>
+  );
+}
+
+function AboutPanel({draft, set}){
+  return (
+    <div className="console-panel">
+      <div className="panel-head"><h2>Sobre</h2><p>Citação de abertura e parágrafos da secção clara.</p></div>
+      <TextField label="Citação de destaque" value={draft.about.quote} textarea onChange={v=>set(d=>{d.about.quote=v;})}/>
+      <div style={{marginTop:"8px"}}>
+        <label style={{display:"block",fontFamily:"var(--font-mono)",fontSize:"10.5px",letterSpacing:".12em",textTransform:"uppercase",color:"var(--text-faint)",marginBottom:"9px"}}>Parágrafos</label>
+        <ListEditor items={draft.about.paragraphs} addLabel="Adicionar parágrafo"
+          onAdd={()=>set(d=>{d.about.paragraphs.push("Novo parágrafo.");})}
+          onChange={(next)=>set(d=>{d.about.paragraphs=next;})}
+          renderRow={(item,upd)=><textarea value={item} onChange={e=>upd(e.target.value)}
+            style={{width:"100%",background:"var(--black)",border:"1px solid var(--hairline-strong)",color:"var(--text)",padding:"10px 11px",fontSize:"13.5px",minHeight:"74px",fontFamily:"var(--font-head)",fontWeight:500}}/>}/>
+      </div>
+    </div>
+  );
+}
+
+function PartnersPanel({draft, set}){
+  return (
+    <div className="console-panel">
+      <div className="panel-head"><h2>Parceiros</h2><p>Marcas e clubes que colaboram nos eventos.</p></div>
+      <ListEditor items={draft.partners} addLabel="Adicionar parceiro"
+        onAdd={()=>set(d=>{d.partners.push({name:"Novo parceiro",role:"Colaboração"});})}
+        onChange={(next)=>set(d=>{d.partners=next;})}
+        renderRow={(item,upd)=>(
+          <div className="inputs cols-2">
+            <RowInput value={item.name} placeholder="Nome" onChange={v=>upd({...item,name:v})}/>
+            <RowInput value={item.role} placeholder="Papel" onChange={v=>upd({...item,role:v})}/>
+          </div>
+        )}/>
+    </div>
+  );
+}
+
+function ContactPanel({draft, set}){
+  return (
+    <div className="console-panel">
+      <div className="panel-head"><h2>Contacto</h2><p>Dados usados no rodapé do site.</p></div>
+      <TextField label="Email" value={draft.contact.email} onChange={v=>set(d=>{d.contact.email=v;})}/>
+      <TextField label="WhatsApp (opcional)" value={draft.contact.whatsapp} onChange={v=>set(d=>{d.contact.whatsapp=v;})}/>
+    </div>
+  );
+}
+
+const TABS = [
+  {id:"hero", label:"Hero", Panel:HeroPanel},
+  {id:"stats", label:"Números", Panel:StatsPanel},
+  {id:"event", label:"Edição", Panel:EventPanel},
+  {id:"highlights", label:"Destaques", Panel:HighlightsPanel},
+  {id:"about", label:"Sobre", Panel:AboutPanel},
+  {id:"partners", label:"Parceiros", Panel:PartnersPanel},
+  {id:"contact", label:"Contacto", Panel:ContactPanel},
+];
+
+function AdminConsole({content, artifactApi, artifactStatus}){
+  const [draft, setDraft] = useState(()=> clone(content));
+  const [tab, setTab] = useState("hero");
+  const [dirty, setDirty] = useState(false);
+  const [saveState, setSaveState] = useState("idle");
+  const [errorMsg, setErrorMsg] = useState("");
+  const [readOnly, setReadOnly] = useState(false);
+  const [toast, setToast] = useState(null);
+
+  const set = useCallback((mutator)=>{
+    setDraft(prev=>{ const next = clone(prev); mutator(next); return next; });
+    setDirty(true);
+    setSaveState("idle");
+  },[]);
+
+  useEffect(()=>{
+    if(!toast) return;
+    const t = setTimeout(()=> setToast(null), 3600);
+    return ()=> clearTimeout(t);
+  },[toast]);
+
+  const discard = () => { setDraft(clone(content)); setDirty(false); setSaveState("idle"); };
+
+  const save = async () => {
+    if(readOnly) return;
+    setSaveState("saving");
+    setErrorMsg("");
+    try{
+      if(!artifactApi) throw {code:"not_available"};
+      const res = await fetch(window.location.href, {cache:"no-store"});
+      if(!res.ok) throw {code:"fetch_failed"};
+      const html = await res.text();
+      const payload = JSON.stringify({...draft, updatedAt: new Date().toISOString()}).replace(/</g, "\\u003c");
+      const pattern = /(<script id="site-data" type="application\/json">)[\s\S]*?(<\/script>)/;
+      if(!pattern.test(html)) throw {code:"marker_missing"};
+      const newHtml = html.replace(pattern, (m, a, b) => a + payload + b);
+      await artifactApi.publish(newHtml);
+      setSaveState("saved");
+      setDirty(false);
+      setToast("Site publicado. As alterações já estão visíveis para todos.");
+    }catch(err){
+      const code = err && err.code;
+      if(code === "not_writer" || code === "not_granted" || code === "consent_required"){
+        setReadOnly(true);
+        setErrorMsg("Não tens permissão de edição neste site — estás em modo de visualização.");
+      }else if(code === "conflict"){
+        setErrorMsg("Foi publicada uma versão mais recente entretanto. A página vai atualizar-se.");
+      }else if(code === "not_available"){
+        setErrorMsg("A publicação não está disponível nesta janela de pré-visualização.");
+      }else{
+        setErrorMsg("Não foi possível guardar agora. Tenta novamente.");
+      }
+      setSaveState("error");
+    }
+  };
+
+  const ActivePanel = TABS.find(t=>t.id===tab).Panel;
+
+  return (
+    <div className="console">
+      <div className="console-top">
+        <a className="console-back" href="#top">← Ver site</a>
+        <div className="console-title">Torke Nation <span className="vr">/</span> <b>Administração</b></div>
+      </div>
+      <div className="console-body">
+        <div className="console-tabs">
+          {TABS.map(t=>(
+            <button key={t.id} className={"tab-btn " + (tab===t.id?"active":"")} onClick={()=>setTab(t.id)}>{t.label}</button>
+          ))}
+        </div>
+        <div className="console-main">
+          {readOnly && (
+            <div className="banner warn"><span><b>Modo de visualização.</b> As alterações que fizeres aqui não vão ser guardadas.</span></div>
+          )}
+          {!readOnly && artifactStatus==="unavailable" && (
+            <div className="banner"><span>A publicação em direto não está disponível nesta pré-visualização — as alterações ficam só nesta sessão.</span></div>
+          )}
+          <ActivePanel draft={draft} set={set}/>
+        </div>
+      </div>
+      <div className="save-bar">
+        <span className={"save-status " + (saveState==="saving" ? "dirty" : saveState==="saved" ? "ok" : saveState==="error" ? "err" : dirty ? "dirty" : "")}>
+          <span className="dot"/>
+          {saveState==="saving" && "A publicar…"}
+          {saveState==="saved" && !dirty && "Tudo guardado"}
+          {saveState==="error" && errorMsg}
+          {saveState==="idle" && dirty && "Alterações por guardar"}
+          {saveState==="idle" && !dirty && "Sem alterações"}
+        </span>
+        <div style={{display:"flex",gap:"10px"}}>
+          <button className="btn btn-ghost btn-sm" onClick={discard} disabled={!dirty || saveState==="saving"}>Descartar</button>
+          <button className="btn btn-outline btn-sm" onClick={save} disabled={!dirty || saveState==="saving" || readOnly}>
+            {saveState==="saving" ? "A publicar…" : "Guardar e publicar"}
+          </button>
+        </div>
+      </div>
+      {toast && <div className="toast">{toast}</div>}
+    </div>
+  );
+}
+
+/* ================= APP ================= */
+
+function App(){
+  const seed = useMemo(loadSeed, []);
+  const [content] = useState(seed);
+  const hash = useHashRoute();
+  const [artifactApi, setArtifactApi] = useState(null);
+  const [artifactStatus, setArtifactStatus] = useState("connecting");
+
+  useEffect(()=>{
+    let cancelled = false;
+    if(!(window.claude && window.claude.use)){ setArtifactStatus("unavailable"); return; }
+    window.claude.use("artifact").then(api=>{
+      if(cancelled) return;
+      if(api){ setArtifactApi(api); setArtifactStatus("ready"); }
+      else{ setArtifactStatus("unavailable"); }
+    }).catch(()=>{ if(!cancelled) setArtifactStatus("unavailable"); });
+    return ()=>{ cancelled = true; };
+  },[]);
+
+  if(!content){
+    return <div style={{padding:"60px",fontFamily:"var(--font-mono)",color:"var(--text-dim)"}}>Não foi possível carregar o conteúdo do site.</div>;
+  }
+  if(hash.startsWith("#/admin")){
+    return <AdminConsole content={content} artifactApi={artifactApi} artifactStatus={artifactStatus}/>;
+  }
+  return <PublicSite content={content}/>;
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+</script>
